@@ -9,7 +9,8 @@ int main(void){
 	int tcp_socket = socket(PF_INET, SOCK_DGRAM, 0);
 	
 	if (tcp_socket == -1) {
-		return -1;
+		printf ("smt goes wrong");
+		return 0;
 	} 
 	
 	struct sockaddr_in socket_addr;
@@ -31,6 +32,15 @@ int main(void){
 	if (data_socket == -1){
 		goto exit;
 	}
+
+	char *output_buff = "Hi! Write smth...\n";
+	char input_buff[1024];
+
+	send (data_socket, (void*)&output_buff, sizeof(output_buff), 0);
+	recv (data_socket, (void*)&input_buff, sizeof(input_buff), 0);
+	
+	printf("%s", input_buff);
+	
 exit:
 	if (tcp_socket) {
 		close(tcp_socket);
