@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <strings.h>
+#include <stdio.h>
 
 #define PORT 4444
 #define SERVER_IP "192.168.4.67"
