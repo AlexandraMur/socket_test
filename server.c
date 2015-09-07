@@ -1,4 +1,4 @@
-#include <sys/tupes.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -6,9 +6,9 @@
 #define LISTENERS 10
 
 int main(void){
-	int tcp_socket = socket(PF_INET, SOCK_DGRAM, 0);
+	int udp_socket = socket(PF_INET, SOCK_DGRAM, 0);
 	
-	if (tcp_socket == -1) {
+	if (udp_socket == -1) {
 		printf ("smt goes wrong");
 		return 0;
 	} 
@@ -19,15 +19,16 @@ int main(void){
 	socket_addr.sin_addr.s_addr = INADDR_ANY;
 
 	bzero(&socket_addr.sin_zero, sizeof(socket_addr.sin_zero));
-	bind(tcp_socket, (struct sockaddr*)&socket_addr, sizeof(struct sockaddr));
+	bind(udp_socket, (struct sockaddr*)&socket_addr, sizeof(struct sockaddr));
 	
-	int listen_result = listen(tcp_socket, LISTENERS);
+	int listen_result = listen(udp_socket, LISTENERS);
 	if (listen_result == -1) {
 		goto exit;
 	}
 	
 	int addr_size = sizeof(struct sockaddr_in);
-	int data_socket = accept(tcp_socket, (struct sockaddr*)&remote_addr,&addr_size);
+	struct sockaddr_in remote_addr;
+	int data_socket = accept(udp_socket, (struct sockaddr*)&remote_addr,&addr_size);
 	
 	if (data_socket == -1){
 		goto exit;
@@ -42,11 +43,12 @@ int main(void){
 	printf("%s", input_buff);
 	
 exit:
-	if (tcp_socket) {
-		close(tcp_socket);
+	if (udp_socket) {
+		close(udp_socket);
 	}
 	if (data_socket) {
 		close(data_socket);
 	}
+	printf("finishes!\n");
 	return 0;
 }
