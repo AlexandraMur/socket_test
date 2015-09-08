@@ -35,12 +35,12 @@ int main(void)
 
 	int res = inet_aton(SERVER_IP, &server_addr.sin_addr);
 	if (res == 0) {
-		printf("errro inet_aton\n");
+		printf("error inet_aton\n");
 		goto exit;
 	}
 	
 	char *output_buff = "Hello from Client!\n";
-	int send_res = sendto(data_socket, output_buff, strlen(output_buff) + 1, 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
+	int send_res = sendto(data_socket, output_buff, sizeof(output_buff), 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
 
 	if (send_res < 0){
 		printf("send_res < 0");

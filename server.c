@@ -2,13 +2,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <errno.h>
 
 #define PORT 4444
 #define LISTENERS 10
 
 int main (void)
 {
-	printf ("I'm here!\n");
 	int udp_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
 	if (udp_socket == -1) {
@@ -28,13 +28,13 @@ int main (void)
 		printf("fails 1\n");
 		goto exit;
 	}
-		
+	
 	while(1) {
+		printf("waiting mssg from client\n");
 		char input_buff[1024];
 		ssize_t rec_size = recvfrom(udp_socket, (void*)input_buff, 1024, 0, (struct sockaddr*)&socket_addr, sizeof(struct sockaddr));
 		if (rec_size == -1){
-			printf("fails 2\n");
-			//goto exit;
+			 printf("recvfrom error\n");
 		}
 		printf("data: %s\n", input_buff);
 
