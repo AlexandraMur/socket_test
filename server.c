@@ -2,7 +2,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/select.h>
+#include <strings.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define PORT 4444
 #define LISTENERS 10
@@ -43,6 +45,16 @@ int main (void)
 	
 	if (retval == -1) {
 		printf("return value == -1");
+		goto exit;
+	}
+	
+	char buffer[1024];
+	if (FD_ISSET(udp_socket, &rfds)) {
+		size_t size = recv(udp_socket, buffer, sizeof(buffer), 0);
+		if (size < 0) {
+			printf("Error reading data\n");
+		}
+		printf ("Client's message: %s\n", buffer);
 	}
 exit:
 	if (udp_socket) {
