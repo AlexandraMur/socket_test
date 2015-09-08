@@ -1,8 +1,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/select.h>
 #include <stdio.h>
-#include <errno.h>
 
 #define PORT 4444
 #define LISTENERS 10
@@ -29,15 +29,20 @@ int main (void)
 		goto exit;
 	}
 	
-	while(1) {
-		printf("waiting mssg from client\n");
-		char input_buff[1024];
-		ssize_t rec_size = recvfrom(udp_socket, (void*)input_buff, 1024, 0, (struct sockaddr*)&socket_addr, sizeof(struct sockaddr));
-		if (rec_size == -1){
-			 printf("recvfrom error\n");
-		}
-		printf("data: %s\n", input_buff);
+	fd_set rfds;
+    	struct timeval tv;
+    	int retval;
 
+	FD_ZERO(&rfds);
+    	FD_SET(udp_socket, &rfds);
+	
+	tv.tv_sec = 60;
+   	tv.tv_usec = 0;
+
+	retval = select(udp_socket + 1, &rfds, (fd_set*) 0, (fd_set*) 0, &tv);
+	
+	if (retval == -1) {
+		printf("return value == -1");
 	}
 exit:
 	if (udp_socket) {
