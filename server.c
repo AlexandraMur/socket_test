@@ -28,17 +28,15 @@ int main (void)
 		printf("fails 1\n");
 		goto exit;
 	}
-	
-	
-	printf ("!!!");	
+		
 	while(1) {
 		char input_buff[1024];
 		ssize_t rec_size = recvfrom(udp_socket, (void*)input_buff, 1024, 0, (struct sockaddr*)&socket_addr, sizeof(struct sockaddr));
-		if (rec_size < 0){
+		if (rec_size == -1){
 			printf("fails 2\n");
-			goto exit;
+			//goto exit;
 		}
-		printf("data: %s", input_buff);
+		printf("data: %s\n", input_buff);
 
 	}
 exit:

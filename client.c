@@ -12,24 +12,40 @@ int main(void)
 {
 	int data_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (data_socket == -1) {
+		printf ("error in creating socket\n");
 		return 0;
 	}
 
-	struct sockaddr_in server_addr;
-	server_addr.sin_family = PF_INET;
-	server_addr.sin_port = htons(PORT);
-	
-	struct in_addr server_ip;
-	inet_aton(SERVER_IP, &server_ip);
-	server_addr.sin_addr.s_addr = htonl(server_ip.s_addr);
-	
-	char *buff = "Hello from Client!\n";
-	int bytes_sent = sendto(data_socket, buff, strlen(buff) + 1, 0, (struct sockaddr*)&data_socket, sizeof(struct sockaddr_in)); 
-	
-	if (bytes_sent < 0){
-		printf("bytes_sent < 0\n");
+	struct sockaddr_in client_addr;
+	bzero(&client_addr, sizeof(client_addr));
+	client_addr.sin_family = AF_INET;
+	client_addr.sin_port = htons(0);
+	client_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	int bound = bind(data_socket, (struct sockaddr*)&client_addr, sizeof(client_addr));
+	if (bound < 0) {
+		printf("bound < 0\n");
+		goto exit;
 	}
 	
+	struct sockaddr_in server_addr;
+	bzero(&server_addr, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(PORT);
+
+	int res = inet_aton(SERVER_IP, &server_addr.sin_addr);
+	if (res == 0) {
+		printf("errro inet_aton\n");
+		goto exit;
+	}
+	
+	char *output_buff = "Hello from Client!\n";
+	int send_res = sendto(data_socket, output_buff, strlen(output_buff) + 1, 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
+
+	if (send_res < 0){
+		printf("send_res < 0");
+	}
+exit:
 	close(data_socket);
 	return 0;
 }
