@@ -48,9 +48,9 @@ int main (void)
 		goto exit;
 	}
 	
-	char buffer[1024];
+	char buffer[4096] = {0};
 	if (FD_ISSET(udp_socket, &rfds)) {
-		size_t size = recv(udp_socket, buffer, sizeof(buffer), 0);
+		int size = recvfrom(udp_socket, buffer, sizeof(buffer), 0, (struct sockaddr*)0, (int*)0);
 		if (size < 0) {
 			printf("Error reading data\n");
 		}

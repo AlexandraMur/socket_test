@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <strings.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define PORT 4444
 #define SERVER_IP "192.168.4.67"
@@ -39,11 +40,11 @@ int main(void)
 		goto exit;
 	}
 	
-	char *output_buff = "Hello from Client!\n";
+	char output_buff[] = "Hello from Client!\n";
 	int send_res = sendto(data_socket, output_buff, sizeof(output_buff), 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
 
 	if (send_res < 0){
-		printf("send_res < 0");
+		printf("send_res < 0\n");
 	}
 exit:
 	close(data_socket);
